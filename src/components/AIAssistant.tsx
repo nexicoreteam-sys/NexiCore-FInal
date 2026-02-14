@@ -12,6 +12,49 @@ function SectionDivider() {
   );
 }
 
+/* Small connector dot used on vertical lines */
+function ConnectorDot({ color = "#02defc" }: { color?: string }) {
+  return (
+    <span
+      className="block w-2 h-2 rounded-full mx-auto"
+      style={{ background: color, boxShadow: `0 0 8px ${color}80` }}
+    />
+  );
+}
+
+/* Vertical dashed line between flow steps */
+function VerticalLine() {
+  return (
+    <div className="flex flex-col items-center gap-1 py-1">
+      <span className="w-px h-4 bg-white/10" />
+      <ConnectorDot />
+      <span className="w-px h-4 bg-white/10" />
+    </div>
+  );
+}
+
+const inputSources = [
+  { icon: "🌐", label: "Website" },
+  { icon: "💬", label: "Chat" },
+  { icon: "📞", label: "Telefon" },
+  { icon: "📧", label: "Email" },
+  { icon: "📱", label: "Social Media" },
+];
+
+const flowSteps = [
+  { label: "Primire & Analiză Cerere", desc: "AI procesează mesajul clientului" },
+  { label: "Calificare Automată Lead", desc: "Detectare intenție de cumpărare" },
+  { label: "Colectare Date Client", desc: "Nume, Email, Telefon, Companie" },
+  { label: "Validare & Îmbogățire Date", desc: "Verificare email, telefon, industrie" },
+];
+
+const outputResults = [
+  { icon: "📩", label: "Email Notificare" },
+  { icon: "🔗", label: "Webhook n8n" },
+  { icon: "👤", label: "Follow-up Manual" },
+  { icon: "📊", label: "Raport Lead" },
+];
+
 export default function AIAssistant() {
   return (
     <section id="asistent-ai" className="relative overflow-hidden">
@@ -20,10 +63,14 @@ export default function AIAssistant() {
         {/* Ambient orbs */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] pointer-events-none">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse,rgba(2,222,252,0.04)_0%,transparent_60%)] orb-animate" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_70%,rgba(252,1,151,0.03)_0%,transparent_60%)] orb-animate" style={{ animationDelay: "-5s" }} />
+          <div
+            className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_70%,rgba(252,1,151,0.03)_0%,transparent_60%)] orb-animate"
+            style={{ animationDelay: "-5s" }}
+          />
         </div>
 
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative">
+          {/* Header */}
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -50,116 +97,183 @@ export default function AIAssistant() {
             </motion.p>
           </motion.div>
 
+          {/* ── FLOW DIAGRAM ── */}
           <motion.div
             variants={fadeInUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
-            className="max-w-[640px] mx-auto"
           >
-            {/* Chat shell */}
-            <div className="glass-strong rounded-[24px] overflow-hidden shadow-[0_0_80px_-20px_rgba(2,222,252,0.08)]">
-              {/* Header */}
-              <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
+            {/* Desktop: 3-column layout | Mobile: stacked */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-10 lg:gap-6 items-center">
+
+              {/* ─── LEFT: INPUT SOURCES ─── */}
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="flex flex-col items-center lg:items-end"
+              >
+                <motion.div variants={fadeInUp} className="mb-6">
+                  <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-black bg-gradient-to-r from-[#02defc] to-[#7ffe00]">
+                    Input
+                  </span>
+                </motion.div>
+
                 <div className="relative">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#02defc]/20 to-[#fc0197]/20 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-[#02defc]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                    </svg>
-                  </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#7ffe00] border-2 border-black" />
-                </div>
-                <div>
-                  <div className="text-[13px] font-medium text-white/80">Asistent Nexicore</div>
-                  <div className="text-[11px] text-white/30">Online acum</div>
-                </div>
-              </div>
-
-              {/* Messages */}
-              <div className="p-5 space-y-4 min-h-[300px]">
-                {/* Bot */}
-                <div className="flex gap-2.5">
-                  <div className="shrink-0 w-7 h-7 rounded-full bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mt-0.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-[#02defc]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                    </svg>
-                  </div>
-                  <div className="bg-white/[0.04] border border-white/[0.04] rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
-                    <p className="text-[13px] leading-[1.7] text-white/60 font-light">
-                      Iubita mea frumoasa, te ai spalat la pasa? 
-                  
-                    </p>
+                  {/* Glow behind icons */}
+                  <div
+                    className="absolute inset-0 rounded-3xl pointer-events-none"
+                    style={{
+                      background: "radial-gradient(ellipse at center, rgba(2,222,252,0.06) 0%, transparent 70%)",
+                      filter: "blur(30px)",
+                    }}
+                  />
+                  <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-3 gap-3 relative">
+                    {inputSources.map((src) => (
+                      <motion.div
+                        key={src.label}
+                        variants={fadeInUp}
+                        className="neon-card !rounded-2xl p-4 flex flex-col items-center gap-2 min-w-[90px]"
+                      >
+                        <span className="text-2xl">{src.icon}</span>
+                        <span className="text-[11px] text-white/40 font-medium tracking-wide">
+                          {src.label}
+                        </span>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
 
-                {/* User */}
-                <div className="flex gap-2.5 justify-end">
-                  <div className="bg-[#02defc]/[0.08] border border-[#02defc]/[0.12] rounded-2xl rounded-tr-md px-4 py-3 max-w-[80%]">
-                    <p className="text-[13px] leading-[1.7] text-white/70 font-light">
-                      Da, acum pasarica mea este curata 
-                    </p>
+                {/* Horizontal connector (desktop only) */}
+                <div className="hidden lg:flex items-center gap-1.5 mt-6 self-end pr-0">
+                  <span className="w-12 h-px bg-gradient-to-r from-transparent to-[#02defc]/30" />
+                  <ConnectorDot />
+                </div>
+                {/* Vertical connector (mobile only) */}
+                <div className="lg:hidden mt-4">
+                  <VerticalLine />
+                </div>
+              </motion.div>
+
+              {/* ─── CENTER: PROCESSING FLOW ─── */}
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="flex flex-col items-center"
+              >
+                {/* Outer glow frame */}
+                <div className="relative">
+                  <div
+                    className="absolute -inset-4 rounded-[32px] pointer-events-none"
+                    style={{
+                      background: "linear-gradient(180deg, rgba(2,222,252,0.04) 0%, rgba(127,254,0,0.02) 50%, rgba(252,1,151,0.04) 100%)",
+                      border: "1px solid rgba(255,255,255,0.04)",
+                      borderRadius: "32px",
+                    }}
+                  />
+
+                  <div className="relative flex flex-col items-center">
+                    {flowSteps.map((step, i) => (
+                      <div key={step.label} className="flex flex-col items-center">
+                        {i > 0 && <VerticalLine />}
+                        <motion.div
+                          variants={fadeInUp}
+                          className="glass-strong rounded-2xl px-6 py-4 text-center max-w-[340px] w-full relative group"
+                        >
+                          {/* Side accent */}
+                          <div
+                            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-8 rounded-full opacity-60"
+                            style={{
+                              background:
+                                i === 0 ? "#02defc" :
+                                i === 1 ? "#7ffe00" :
+                                i === 2 ? "#f47319" : "#fc0197",
+                              boxShadow: `0 0 12px ${
+                                i === 0 ? "#02defc" :
+                                i === 1 ? "#7ffe00" :
+                                i === 2 ? "#f47319" : "#fc0197"
+                              }40`,
+                            }}
+                          />
+                          <p className="text-[14px] text-white/80 font-medium mb-1">
+                            {step.label}
+                          </p>
+                          <p className="text-[12px] text-white/30 font-light">
+                            {step.desc}
+                          </p>
+                        </motion.div>
+                      </div>
+                    ))}
+
+                    {/* Bottom branch: Approvals + Automation */}
+                    <VerticalLine />
+                    <motion.div variants={fadeInUp} className="flex items-center gap-4">
+                      <div className="glass-strong rounded-xl px-5 py-3 text-center">
+                        <p className="text-[13px] text-white/70 font-medium">Automatizare</p>
+                        <p className="text-[11px] text-white/25 font-light">n8n Webhook</p>
+                      </div>
+                      <span className="text-white/15">←</span>
+                      <div className="rounded-xl px-5 py-3 text-center bg-gradient-to-r from-[#7ffe00]/10 to-[#02defc]/10 border border-[#7ffe00]/15">
+                        <p className="text-[13px] text-white/70 font-medium">Confirmare</p>
+                        <p className="text-[11px] text-white/25 font-light">Email automat</p>
+                      </div>
+                    </motion.div>
                   </div>
+                </div>
+              </motion.div>
+
+              {/* ─── RIGHT: OUTPUT RESULTS ─── */}
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="flex flex-col items-center lg:items-start"
+              >
+                {/* Horizontal connector (desktop only) */}
+                <div className="hidden lg:flex items-center gap-1.5 mb-6 self-start pl-0">
+                  <ConnectorDot color="#7ffe00" />
+                  <span className="w-12 h-px bg-gradient-to-r from-[#7ffe00]/30 to-transparent" />
+                </div>
+                {/* Vertical connector (mobile only) */}
+                <div className="lg:hidden mb-4">
+                  <VerticalLine />
                 </div>
 
-                {/* Bot response */}
-                <div className="flex gap-2.5">
-                  <div className="shrink-0 w-7 h-7 rounded-full bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mt-0.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-[#02defc]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                    </svg>
-                  </div>
-                  <div className="bg-white/[0.04] border border-white/[0.04] rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
-                    <p className="text-[13px] leading-[1.7] text-white/60 font-light">
-                      Din pacate nu te pot ajuta, pulica mea este impu
-                    </p>
-                  </div>
-                </div>
+                <motion.div variants={fadeInUp} className="mb-6 flex justify-center lg:justify-start w-full">
+                  <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-black bg-gradient-to-r from-[#7ffe00] to-[#02defc]">
+                    Output
+                  </span>
+                </motion.div>
 
-                {/* Typing */}
-                <div className="flex gap-2.5">
-                  <div className="shrink-0 w-7 h-7 rounded-full bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mt-0.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-[#02defc]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                    </svg>
-                  </div>
-                  <div className="bg-white/[0.04] border border-white/[0.04] rounded-2xl rounded-tl-md px-4 py-3">
-                    <div className="flex gap-1.5 items-center h-5">
-                      <motion.span
-                        className="w-1.5 h-1.5 bg-[#02defc] rounded-full"
-                        animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.8, 1.2, 0.8] }}
-                        transition={{ duration: 1.4, repeat: Infinity, delay: 0 }}
-                      />
-                      <motion.span
-                        className="w-1.5 h-1.5 bg-[#7ffe00] rounded-full"
-                        animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.8, 1.2, 0.8] }}
-                        transition={{ duration: 1.4, repeat: Infinity, delay: 0.2 }}
-                      />
-                      <motion.span
-                        className="w-1.5 h-1.5 bg-[#fc0197] rounded-full"
-                        animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.8, 1.2, 0.8] }}
-                        transition={{ duration: 1.4, repeat: Infinity, delay: 0.4 }}
-                      />
-                    </div>
+                <div className="relative">
+                  <div
+                    className="absolute inset-0 rounded-3xl pointer-events-none"
+                    style={{
+                      background: "radial-gradient(ellipse at center, rgba(127,254,0,0.06) 0%, transparent 70%)",
+                      filter: "blur(30px)",
+                    }}
+                  />
+                  <div className="grid grid-cols-2 gap-3 relative">
+                    {outputResults.map((out) => (
+                      <motion.div
+                        key={out.label}
+                        variants={fadeInUp}
+                        className="neon-card !rounded-2xl p-4 flex flex-col items-center gap-2 min-w-[110px]"
+                      >
+                        <span className="text-2xl">{out.icon}</span>
+                        <span className="text-[11px] text-white/40 font-medium tracking-wide text-center">
+                          {out.label}
+                        </span>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
-              </div>
-
-              {/* Input */}
-              <div className="px-5 py-4 border-t border-white/[0.04]">
-                <div className="flex gap-3 items-center">
-                  <div className="flex-1 px-4 py-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04] text-[13px] text-white/20 font-light">
-                    Scrie un mesaj...
-                  </div>
-                  <button
-                    disabled
-                    className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.04] flex items-center justify-center cursor-not-allowed"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white/15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+              </motion.div>
             </div>
 
             {/* Feature pills */}
@@ -168,7 +282,7 @@ export default function AIAssistant() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="flex flex-wrap justify-center gap-2.5 mt-8"
+              className="flex flex-wrap justify-center gap-2.5 mt-16"
             >
               {[
                 { label: "Disponibil 24/7", color: "#02defc" },
