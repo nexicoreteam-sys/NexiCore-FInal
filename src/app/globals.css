@@ -130,6 +130,7 @@ html {
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 
 .neon-card:hover {
@@ -348,4 +349,24 @@ html {
   border-radius: 50%;
   background: #02defc;
   box-shadow: 0 0 6px #02defc;
+}
+
+/* ─── CONFETTI ─── */
+@keyframes cookie-slide-up {
+  0% { opacity: 0; transform: translateY(100%); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes confetti-fly {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.3);
+    opacity: 0;
+  }
 }

@@ -1,9 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 
+/* ─── CONFETTI ─── */
+const COLORS = ["#02defc", "#7ffe00", "#fc0197", "#f47319", "#fdf301", "#fff"];
+
+function spawnConfetti(container: HTMLDivElement, button: HTMLButtonElement) {
+  const btnRect = button.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const originX = btnRect.left - containerRect.left + btnRect.width / 2;
+  const originY = btnRect.top - containerRect.top + btnRect.height / 2;
+
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement("div");
+    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    const size = 6 + Math.random() * 8;
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = 200 + Math.random() * 500;
+    const tx = Math.cos(angle) * velocity;
+    const ty = Math.sin(angle) * velocity - 200;
+    const rotation = Math.random() * 720 - 360;
+    const duration = 1.5 + Math.random() * 1;
+    const shape = Math.random();
+
+    el.style.cssText = `
+      position: absolute;
+      left: ${originX}px;
+      top: ${originY}px;
+      width: ${shape > 0.6 ? size : size * 0.4}px;
+      height: ${shape > 0.3 ? size : size * 0.4}px;
+      background: ${color};
+      border-radius: ${shape > 0.7 ? "50%" : "2px"};
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 1;
+      transform: translate(0, 0) rotate(0deg);
+      animation: confetti-fly ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      --tx: ${tx}px;
+      --ty: ${ty}px;
+      --rot: ${rotation}deg;
+    `;
+
+    container.appendChild(el);
+    setTimeout(() => el.remove(), duration * 1000 + 100);
+  }
+}
+
+/* ─── SECTION DIVIDER ─── */
 function SectionDivider() {
   return (
     <div className="section-line section-line-dots">
@@ -13,6 +58,7 @@ function SectionDivider() {
   );
 }
 
+/* ─── CONTACT FORM ─── */
 export default function ContactForm() {
   const [form, setForm] = useState({
     name: "",
@@ -21,6 +67,8 @@ export default function ContactForm() {
     message: "",
   });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const confettiRef = useRef<HTMLDivElement>(null);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -28,10 +76,15 @@ export default function ContactForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Fire confetti immediately on click
+    if (confettiRef.current && buttonRef.current) {
+      spawnConfetti(confettiRef.current, buttonRef.current);
+    }
+
     setStatus("sending");
 
     try {
-      // Send to your webhook / API endpoint
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,11 +100,18 @@ export default function ContactForm() {
   }
 
   return (
-    <section id="contact-form" className="relative overflow-hidden">
+    <section id="contact-form" className="relative">
       <SectionDivider />
       <div className="py-28 md:py-36 relative">
+        {/* Confetti container — covers section, allows overflow */}
+        <div
+          ref={confettiRef}
+          className="absolute inset-0 pointer-events-none overflow-visible"
+          style={{ zIndex: 100 }}
+        />
+
         {/* Ambient orbs */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div
             className="absolute w-[500px] h-[400px] rounded-full orb-animate"
             style={{
@@ -171,6 +231,7 @@ export default function ContactForm() {
 
               {/* Submit */}
               <button
+                ref={buttonRef}
                 type="submit"
                 disabled={status === "sending"}
                 className="neon-btn w-full !py-4 !text-[15px] !font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
@@ -180,9 +241,14 @@ export default function ContactForm() {
 
               {/* Status messages */}
               {status === "sent" && (
-                <p className="text-center text-[#7ffe00] text-sm font-medium">
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="text-center text-[#7ffe00] text-sm font-medium"
+                >
                   Mesajul a fost trimis cu succes! Te vom contacta în curând.
-                </p>
+                </motion.p>
               )}
               {status === "error" && (
                 <p className="text-center text-[#fc0197] text-sm font-medium">
@@ -193,6 +259,7 @@ export default function ContactForm() {
           </motion.div>
         </div>
       </div>
+
     </section>
   );
 }
