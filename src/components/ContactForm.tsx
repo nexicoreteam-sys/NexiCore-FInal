@@ -224,7 +224,7 @@ export default function ContactForm() {
                   rows={4}
                   value={form.message}
                   onChange={handleChange}
-                  placeholder="Spune-ne pe scurt despre proiectul tău..."
+                  placeholder="Lasă site-ul tău aici sau un scurt mesaj despre ce ai nevoie..."
                   className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-5 py-3.5 text-white text-[15px] placeholder:text-white/20 outline-none focus:border-[#02defc]/30 focus:bg-white/[0.05] transition-all duration-300 resize-none"
                 />
               </div>

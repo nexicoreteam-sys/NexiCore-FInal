@@ -183,7 +183,7 @@ export default function CTA() {
             >
               {[
                 { value: "24h", label: "Răspuns Garantat", color: "#02defc" },
-                { value: "0", label: "Cost Consultanță", color: "#7ffe00" },
+                { value: "0€", label: "Cost Consultanță", color: "#7ffe00" },
                 { value: "100%", label: "Transparență", color: "#f47319" },
                 { value: "∞", label: "Suport Post-Lansare", color: "#fc0197" },
               ].map((item) => (
