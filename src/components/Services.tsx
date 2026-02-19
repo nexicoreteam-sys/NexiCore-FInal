@@ -251,9 +251,9 @@ function ResponsiveGraphic() {
         }}
       />
       {/* Floating orbs */}
-      <div className="absolute top-1/2 right-[25%] -translate-y-1/2 w-[200px] h-[150px] rounded-full bg-[#02defc] opacity-[0.025] blur-[70px]" style={{ animation: "responsive-orb-1 6s ease-in-out infinite" }} />
-      <div className="absolute top-[30%] right-[40%] w-[150px] h-[120px] rounded-full bg-[#fc0197] opacity-[0.02] blur-[60px]" style={{ animation: "responsive-orb-2 8s ease-in-out infinite" }} />
-      <div className="absolute bottom-[20%] right-[15%] w-[120px] h-[100px] rounded-full bg-[#7ffe00] opacity-[0.02] blur-[50px]" style={{ animation: "responsive-orb-3 7s ease-in-out infinite" }} />
+      <div className="absolute top-1/2 right-[25%] -translate-y-1/2 w-[250px] h-[200px] rounded-full will-change-transform" style={{ background: "radial-gradient(circle, rgba(2,222,252,0.03) 0%, transparent 60%)", animation: "responsive-orb-1 6s ease-in-out infinite" }} />
+      <div className="absolute top-[30%] right-[40%] w-[200px] h-[160px] rounded-full will-change-transform" style={{ background: "radial-gradient(circle, rgba(252,1,151,0.025) 0%, transparent 60%)", animation: "responsive-orb-2 8s ease-in-out infinite" }} />
+      <div className="absolute bottom-[20%] right-[15%] w-[170px] h-[140px] rounded-full will-change-transform" style={{ background: "radial-gradient(circle, rgba(127,254,0,0.025) 0%, transparent 60%)", animation: "responsive-orb-3 7s ease-in-out infinite" }} />
     </div>
   );
 }
@@ -433,10 +433,10 @@ function DeviceMorphAnimation() {
         <AnimatePresence mode="wait">
           <motion.div
             key={deviceIndex}
-            initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, scale: 0.85, filter: "blur(6px)" }}
-            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute inset-0 flex items-center justify-center"
           >
             <svg
@@ -585,7 +585,7 @@ export default function Services() {
                 <AnimatedStat value={95} suffix="+" label="Lighthouse" />
               </div>
               {/* Glow effect */}
-              <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-[#02defc] opacity-[0.02] blur-[80px] group-hover:opacity-[0.05] transition-opacity duration-700" />
+              <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-700" style={{ background: "radial-gradient(circle, rgba(2,222,252,0.15) 0%, transparent 60%)" }} />
             </motion.div>
 
             {/* ── CARD 2: Asistent AI (tall) ── */}
@@ -638,7 +638,7 @@ export default function Services() {
                 </div>
               </div>
               {/* Glow */}
-              <div className="absolute -bottom-16 -right-16 w-48 h-48 rounded-full bg-[#fc0197] opacity-[0.02] blur-[60px] group-hover:opacity-[0.05] transition-opacity duration-700" />
+              <div className="absolute -bottom-16 -right-16 w-48 h-48 rounded-full opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-700" style={{ background: "radial-gradient(circle, rgba(252,1,151,0.15) 0%, transparent 60%)" }} />
             </motion.div>
 
             {/* ── CARD 3: Optimizare SEO ── */}
@@ -676,7 +676,7 @@ export default function Services() {
                   </span>
                 ))}
               </div>
-              <div className="absolute -bottom-12 -right-12 w-36 h-36 rounded-full bg-[#7ffe00] opacity-[0.02] blur-[50px] group-hover:opacity-[0.04] transition-opacity duration-700" />
+              <div className="absolute -bottom-12 -right-12 w-36 h-36 rounded-full opacity-[0.02] group-hover:opacity-[0.04] transition-opacity duration-700" style={{ background: "radial-gradient(circle, rgba(127,254,0,0.15) 0%, transparent 60%)" }} />
             </motion.div>
 
             {/* ── CARD 4: Landing Pages ── */}
@@ -723,7 +723,7 @@ export default function Services() {
                   />
                 </div>
               </div>
-              <div className="absolute -bottom-12 -left-12 w-36 h-36 rounded-full bg-[#f47319] opacity-[0.02] blur-[50px] group-hover:opacity-[0.04] transition-opacity duration-700" />
+              <div className="absolute -bottom-12 -left-12 w-36 h-36 rounded-full opacity-[0.02] group-hover:opacity-[0.04] transition-opacity duration-700" style={{ background: "radial-gradient(circle, rgba(244,115,25,0.15) 0%, transparent 60%)" }} />
             </motion.div>
 
             {/* ── CARD 5: Design Responsive (wide bottom) ── */}
@@ -763,7 +763,7 @@ export default function Services() {
                 <DeviceMorphAnimation />
               </div>
               {/* Glow */}
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-80 h-40 rounded-full bg-[#02defc] opacity-[0.015] blur-[80px] group-hover:opacity-[0.035] transition-opacity duration-700" />
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-80 h-40 rounded-full opacity-[0.015] group-hover:opacity-[0.035] transition-opacity duration-700" style={{ background: "radial-gradient(circle, rgba(2,222,252,0.12) 0%, transparent 60%)" }} />
             </motion.div>
           </div>
         </div>

@@ -45,21 +45,19 @@ export default function CTA() {
         {/* Ambient orbs */}
         <div className="absolute inset-0 pointer-events-none">
           <div
-            className="absolute w-[600px] h-[400px] rounded-full orb-animate"
+            className="absolute w-[600px] h-[400px] rounded-full orb-animate will-change-transform"
             style={{
               top: "20%",
               left: "10%",
-              background: "radial-gradient(circle, rgba(2,222,252,0.04) 0%, transparent 60%)",
-              filter: "blur(60px)",
+              background: "radial-gradient(circle, rgba(2,222,252,0.03) 0%, rgba(2,222,252,0.01) 30%, transparent 55%)",
             }}
           />
           <div
-            className="absolute w-[500px] h-[350px] rounded-full orb-animate"
+            className="absolute w-[500px] h-[350px] rounded-full orb-animate will-change-transform"
             style={{
               bottom: "15%",
               right: "10%",
-              background: "radial-gradient(circle, rgba(252,1,151,0.03) 0%, transparent 60%)",
-              filter: "blur(60px)",
+              background: "radial-gradient(circle, rgba(252,1,151,0.025) 0%, rgba(252,1,151,0.008) 30%, transparent 55%)",
               animationDelay: "-6s",
             }}
           />

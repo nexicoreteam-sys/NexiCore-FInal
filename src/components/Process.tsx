@@ -81,14 +81,13 @@ function StepBg({ accent, index }: { accent: string; index: number }) {
     /* Descoperire — radial scan lines expanding outward */
     () => (
       <svg className="absolute inset-0 w-full h-full opacity-[0.05] group-hover:opacity-[0.12] transition-opacity duration-700" viewBox="0 0 300 220" preserveAspectRatio="none">
-        {[...Array(6)].map((_, i) => (
+        {[0, 2, 4].map((i) => (
           <circle key={i} cx="150" cy="110" r={20 + i * 25} fill="none" stroke={accent} strokeWidth="0.5" strokeDasharray="8 12">
             <animate attributeName="r" values={`${20 + i * 25};${50 + i * 25};${20 + i * 25}`} dur={`${3 + i * 0.4}s`} repeatCount="indefinite" />
-            <animate attributeName="stroke-dashoffset" values="0;-40" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
             <animate attributeName="opacity" values="0.6;0.2;0.6" dur={`${3 + i * 0.4}s`} repeatCount="indefinite" />
           </circle>
         ))}
-        {[...Array(5)].map((_, i) => {
+        {[0, 2, 4].map((i) => {
           const angle = (i * 72) * (Math.PI / 180);
           return (
             <circle key={`p-${i}`} r="2" fill={accent}>
@@ -103,17 +102,17 @@ function StepBg({ accent, index }: { accent: string; index: number }) {
     /* Strategie — diagonal crossing grid lines */
     () => (
       <svg className="absolute inset-0 w-full h-full opacity-[0.05] group-hover:opacity-[0.12] transition-opacity duration-700" viewBox="0 0 300 220" preserveAspectRatio="none">
-        {[...Array(7)].map((_, i) => (
+        {[0, 2, 4, 6].map((i) => (
           <line key={`a-${i}`} x1={-20 + i * 50} y1="-10" x2={-70 + i * 50} y2="230" stroke={accent} strokeWidth="0.5" strokeDasharray="6 10">
             <animate attributeName="stroke-dashoffset" values="0;-32" dur={`${2.5 + i * 0.2}s`} repeatCount="indefinite" />
           </line>
         ))}
-        {[...Array(7)].map((_, i) => (
+        {[0, 2, 4, 6].map((i) => (
           <line key={`b-${i}`} x1={320 - i * 50} y1="-10" x2={370 - i * 50} y2="230" stroke={accent} strokeWidth="0.4" strokeDasharray="4 12">
             <animate attributeName="stroke-dashoffset" values="0;32" dur={`${3 + i * 0.15}s`} repeatCount="indefinite" />
           </line>
         ))}
-        {[...Array(4)].map((_, i) => (
+        {[0, 2].map((i) => (
           <circle key={`n-${i}`} r="2" fill={accent}>
             <animate attributeName="cx" values={`${40 + i * 70};${70 + i * 70};${40 + i * 70}`} dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.5}s`} />
             <animate attributeName="cy" values="0;220;0" dur={`${4 + i * 0.5}s`} repeatCount="indefinite" begin={`${i * 0.5}s`} />
@@ -125,49 +124,31 @@ function StepBg({ accent, index }: { accent: string; index: number }) {
     /* Dezvoltare — horizontal code-stream lines */
     () => (
       <svg className="absolute inset-0 w-full h-full opacity-[0.05] group-hover:opacity-[0.12] transition-opacity duration-700" viewBox="0 0 300 220" preserveAspectRatio="none">
-        {[...Array(8)].map((_, i) => (
+        {[0, 2, 4, 6].map((i) => (
           <line key={i} x1="-30" y1={20 + i * 25} x2="330" y2={20 + i * 25} stroke={accent} strokeWidth={i % 2 === 0 ? "0.8" : "0.4"} strokeDasharray={i % 2 === 0 ? "30 50" : "15 35"}>
             <animate attributeName="stroke-dashoffset" values="0;-80" dur={`${1.5 + i * 0.2}s`} repeatCount="indefinite" />
           </line>
         ))}
-        {[...Array(6)].map((_, i) => (
-          <g key={`cp-${i}`}>
-            <circle r={1.5 + (i % 2)} fill={accent}>
-              <animate attributeName="cx" values="-10;310" dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
-              <animate attributeName="cy" values={`${25 + i * 32};${20 + i * 32}`} dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
-              <animate attributeName="opacity" values="0;1;1;0" dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
-            </circle>
-            <line stroke={accent} strokeWidth="0.6">
-              <animate attributeName="x1" values="-40;280" dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
-              <animate attributeName="x2" values="-10;310" dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
-              <animate attributeName="y1" values={`${25 + i * 32};${20 + i * 32}`} dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
-              <animate attributeName="y2" values={`${25 + i * 32};${20 + i * 32}`} dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
-              <animate attributeName="opacity" values="0;0.5;0.5;0" dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
-            </line>
-          </g>
+        {[0, 2, 4].map((i) => (
+          <circle key={`cp-${i}`} r={1.5 + (i % 2)} fill={accent}>
+            <animate attributeName="cx" values="-10;310" dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
+            <animate attributeName="cy" values={`${25 + i * 32};${20 + i * 32}`} dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
+            <animate attributeName="opacity" values="0;1;1;0" dur={`${1 + i * 0.25}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
+          </circle>
         ))}
       </svg>
     ),
     /* Lansare — upward rocket trails */
     () => (
       <svg className="absolute inset-0 w-full h-full opacity-[0.05] group-hover:opacity-[0.12] transition-opacity duration-700" viewBox="0 0 300 220" preserveAspectRatio="none">
-        {[...Array(7)].map((_, i) => (
-          <g key={`r-${i}`}>
-            <circle r={1.5 + (i % 3) * 0.5} fill={accent}>
-              <animate attributeName="cx" values={`${25 + i * 40};${30 + i * 40}`} dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
-              <animate attributeName="cy" values="230;-10" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
-              <animate attributeName="opacity" values="0;0.9;0.9;0" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
-            </circle>
-            <line stroke={accent} strokeWidth="0.5">
-              <animate attributeName="x1" values={`${25 + i * 40};${30 + i * 40}`} dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
-              <animate attributeName="x2" values={`${25 + i * 40};${30 + i * 40}`} dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
-              <animate attributeName="y1" values="240;0" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
-              <animate attributeName="y2" values="230;-10" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
-              <animate attributeName="opacity" values="0;0.4;0.4;0" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
-            </line>
-          </g>
+        {[0, 2, 4, 6].map((i) => (
+          <circle key={`r-${i}`} r={1.5 + (i % 3) * 0.5} fill={accent}>
+            <animate attributeName="cx" values={`${25 + i * 40};${30 + i * 40}`} dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
+            <animate attributeName="cy" values="230;-10" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
+            <animate attributeName="opacity" values="0;0.9;0.9;0" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.35}s`} />
+          </circle>
         ))}
-        {[...Array(5)].map((_, i) => (
+        {[0, 2, 4].map((i) => (
           <path key={`arr-${i}`} d={`M${40 + i * 55},230 l-3,-7 l3,-2 l3,2 z`} fill={accent}>
             <animate attributeName="transform" values="translate(0,0);translate(0,-240)" dur={`${3 + i * 0.4}s`} repeatCount="indefinite" begin={`${i * 0.6}s`} />
             <animate attributeName="opacity" values="0;0.7;0.7;0" dur={`${3 + i * 0.4}s`} repeatCount="indefinite" begin={`${i * 0.6}s`} />
@@ -178,18 +159,18 @@ function StepBg({ accent, index }: { accent: string; index: number }) {
     /* Suport — orbiting shield pulses */
     () => (
       <svg className="absolute inset-0 w-full h-full opacity-[0.05] group-hover:opacity-[0.12] transition-opacity duration-700" viewBox="0 0 300 220" preserveAspectRatio="none">
-        {[...Array(4)].map((_, i) => (
+        {[0, 2].map((i) => (
           <circle key={`pulse-${i}`} cx="150" cy="110" fill="none" stroke={accent} strokeWidth="0.5">
             <animate attributeName="r" values="5;140" dur={`${4 + i * 0.5}s`} repeatCount="indefinite" begin={`${i * 1}s`} />
             <animate attributeName="opacity" values="0.6;0" dur={`${4 + i * 0.5}s`} repeatCount="indefinite" begin={`${i * 1}s`} />
           </circle>
         ))}
-        {[...Array(6)].map((_, i) => (
+        {[0, 2, 4].map((i) => (
           <line key={`hl-${i}`} x1="-30" y1={25 + i * 35} x2="330" y2={25 + i * 35} stroke={accent} strokeWidth="0.3" strokeDasharray="3 15 6 10">
             <animate attributeName="stroke-dashoffset" values="0;-34" dur={`${3 + i * 0.3}s`} repeatCount="indefinite" />
           </line>
         ))}
-        {[...Array(6)].map((_, i) => {
+        {[0, 2, 4].map((i) => {
           const angle = (i * 60) * (Math.PI / 180);
           const r = 50 + (i % 3) * 20;
           return (
@@ -268,15 +249,15 @@ function ArrowConnector({ from, to, direction }: { from: string; to: string; dir
 function StepCard({ step, index }: { step: (typeof steps)[number]; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.92, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-60px" }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
       transition={{
-        duration: 0.7,
-        delay: index * 0.15,
+        duration: 0.45,
+        delay: index * 0.08,
         ease: [0.25, 0.46, 0.45, 0.94] as const,
       }}
-      className="relative group flex-1 min-w-0"
+      className="relative group flex-1 min-w-0 will-change-[opacity,transform]"
     >
       {/* Hover glow */}
       <div
@@ -378,7 +359,7 @@ export default function Process() {
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
+            viewport={{ once: true, margin: "-40px" }}
             className="text-center mb-20"
           >
             <motion.div variants={fadeInUp} className="flex justify-center mb-5">

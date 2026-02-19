@@ -12,31 +12,28 @@ export default function Hero() {
       {/* Neon orbs — floating multi-color */}
       <div className="absolute inset-0 pointer-events-none">
         <div
-          className="absolute w-[600px] h-[600px] rounded-full orb-animate"
+          className="absolute w-[600px] h-[600px] rounded-full orb-animate will-change-transform"
           style={{
             top: "15%",
             left: "10%",
-            background: "radial-gradient(circle, rgba(2,222,252,0.08) 0%, transparent 70%)",
-            filter: "blur(80px)",
+            background: "radial-gradient(circle, rgba(2,222,252,0.05) 0%, rgba(2,222,252,0.02) 30%, transparent 60%)",
           }}
         />
         <div
-          className="absolute w-[500px] h-[500px] rounded-full orb-animate"
+          className="absolute w-[500px] h-[500px] rounded-full orb-animate will-change-transform"
           style={{
             bottom: "10%",
             right: "5%",
-            background: "radial-gradient(circle, rgba(127,254,0,0.06) 0%, transparent 70%)",
-            filter: "blur(80px)",
+            background: "radial-gradient(circle, rgba(127,254,0,0.04) 0%, rgba(127,254,0,0.015) 30%, transparent 60%)",
             animationDelay: "-4s",
           }}
         />
         <div
-          className="absolute w-[400px] h-[400px] rounded-full orb-animate"
+          className="absolute w-[400px] h-[400px] rounded-full orb-animate will-change-transform"
           style={{
             top: "40%",
             right: "25%",
-            background: "radial-gradient(circle, rgba(252,1,151,0.05) 0%, transparent 70%)",
-            filter: "blur(80px)",
+            background: "radial-gradient(circle, rgba(252,1,151,0.035) 0%, rgba(252,1,151,0.01) 30%, transparent 60%)",
             animationDelay: "-8s",
           }}
         />
@@ -44,7 +41,7 @@ export default function Hero() {
 
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 30 }).map((_, i) => {
+        {Array.from({ length: 15 }).map((_, i) => {
           const colors = ["#02defc", "#7ffe00", "#fc0197", "#f47319"];
           const size = 1 + (i % 3);
           return (
@@ -59,14 +56,13 @@ export default function Hero() {
                 backgroundColor: colors[i % colors.length],
               }}
               animate={{
-                opacity: [0.1, 0.35, 0.1],
-                scale: [1, 1.8, 1],
-                y: [0, -15, 0],
+                opacity: [0.1, 0.3, 0.1],
+                y: [0, -12, 0],
               }}
               transition={{
-                duration: 4 + (i % 5),
+                duration: 5 + (i % 4),
                 repeat: Infinity,
-                delay: i * 0.15,
+                delay: i * 0.3,
                 ease: "easeInOut",
               }}
             />

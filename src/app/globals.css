@@ -317,7 +317,9 @@ html {
 }
 
 .orb-animate {
-  animation: orb-float 12s ease-in-out infinite;
+  animation: orb-float 14s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* ─── GLOW CLASSES ─── */

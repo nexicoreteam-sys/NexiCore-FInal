@@ -13,7 +13,7 @@ function spawnConfetti(container: HTMLDivElement, button: HTMLButtonElement) {
   const originX = btnRect.left - containerRect.left + btnRect.width / 2;
   const originY = btnRect.top - containerRect.top + btnRect.height / 2;
 
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 45; i++) {
     const el = document.createElement("div");
     const color = COLORS[Math.floor(Math.random() * COLORS.length)];
     const size = 6 + Math.random() * 8;
@@ -113,21 +113,19 @@ export default function ContactForm() {
         {/* Ambient orbs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div
-            className="absolute w-[500px] h-[400px] rounded-full orb-animate"
+            className="absolute w-[500px] h-[400px] rounded-full orb-animate will-change-transform"
             style={{
               top: "10%",
               right: "5%",
-              background: "radial-gradient(circle, rgba(2,222,252,0.04) 0%, transparent 60%)",
-              filter: "blur(60px)",
+              background: "radial-gradient(circle, rgba(2,222,252,0.03) 0%, rgba(2,222,252,0.01) 30%, transparent 55%)",
             }}
           />
           <div
-            className="absolute w-[400px] h-[300px] rounded-full orb-animate"
+            className="absolute w-[400px] h-[300px] rounded-full orb-animate will-change-transform"
             style={{
               bottom: "10%",
               left: "5%",
-              background: "radial-gradient(circle, rgba(127,254,0,0.03) 0%, transparent 60%)",
-              filter: "blur(60px)",
+              background: "radial-gradient(circle, rgba(127,254,0,0.025) 0%, rgba(127,254,0,0.008) 30%, transparent 55%)",
               animationDelay: "-4s",
             }}
           />

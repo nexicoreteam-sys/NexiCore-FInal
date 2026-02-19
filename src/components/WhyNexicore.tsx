@@ -99,10 +99,10 @@ function AnimatedCounter({ end, suffix, label, color }: { end: number; suffix: s
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
       className="text-center group"
     >
       <div className="relative inline-block mb-2">
@@ -135,12 +135,12 @@ function RevealTitle() {
       {words.map((word, i) => (
         <motion.span
           key={word}
-          initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{
-            duration: 0.6,
-            delay: 0.3 + i * 0.2,
+            duration: 0.45,
+            delay: 0.2 + i * 0.15,
             ease: [0.25, 0.46, 0.45, 0.94] as const,
           }}
           className={`inline-block ${i === 1 ? "gradient-text ml-3" : "text-white"}`}
@@ -583,12 +583,12 @@ function DifferentiatorCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.92, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-60px" }}
+      initial={{ opacity: 0, y: 25 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
       transition={{
-        duration: 0.7,
-        delay: index * 0.12,
+        duration: 0.45,
+        delay: index * 0.08,
         ease: [0.25, 0.46, 0.45, 0.94] as const,
       }}
       className="relative group"
