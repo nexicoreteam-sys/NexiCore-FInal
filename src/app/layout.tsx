@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import CookieConsent from "@/components/CookieConsent";
+import ChatWidget from "@/components/ChatWidget";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -104,6 +105,7 @@ export default function RootLayout({
         className={`${outfit.variable} ${jetbrainsMono.variable} antialiased noise-overlay`}
       >
         {children}
+        <ChatWidget />
         <CookieConsent />
       </body>
     </html>
