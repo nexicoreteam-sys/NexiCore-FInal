@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, phone, email, message, timestamp } = body;
 
-    // Validate required fields
     if (!name || !phone || !email || !message) {
       return NextResponse.json(
         { error: "All fields are required" },
@@ -14,7 +15,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -23,22 +23,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-    });
-
     const formattedTime = new Date(timestamp).toLocaleString("ro-RO", {
       timeZone: "Europe/Bucharest",
       dateStyle: "full",
       timeStyle: "short",
     });
 
-    await transporter.sendMail({
-      from: `"Nexicore Contact" <${process.env.GMAIL_USER}>`,
+    const { error } = await resend.emails.send({
+      from: "Nexicore Contact <onboarding@resend.dev>",
       to: "nexicoreteam@gmail.com",
       subject: `Mesaj nou de la ${name}`,
       html: `
@@ -69,15 +61,20 @@ export async function POST(request: Request) {
             </tr>
           </table>
           <p style="margin-top: 30px; font-size: 12px; color: #aaa; text-align: center;">
-            Trimis automat de nexicore.ro
+            Trimis automat de nexicore.vercel.app
           </p>
         </div>
       `,
     });
 
+    if (error) {
+      console.error("Resend error:", error);
+      return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
+    }
+
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Email send error:", err);
+    console.error("Server error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
