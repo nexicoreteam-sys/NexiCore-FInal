@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { sendMessage, submitLead } from '../lib/chat';
 import '../styles/chat.css';
 
-const SESSION_KEY = 'nexicore_chat_v1';
 const LEAD_DATA_RE = /\[LEAD_DATA:([^\]]+)\]/;
 
 const WELCOME_MESSAGE = {
@@ -211,30 +210,7 @@ export default function ChatWidget() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  // ── Restore from localStorage on mount ──────────────────────────────────
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(SESSION_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setMessages(parsed);
-        }
-      }
-    } catch {
-      // ignore parse errors
-    }
-  }, []);
-
-  // ── Persist messages to localStorage ───────────────────────────────────
-  useEffect(() => {
-    try {
-      localStorage.setItem(SESSION_KEY, JSON.stringify(messages));
-    } catch {
-      // storage might be full
-    }
-  }, [messages]);
+  const leadSubmittedRef = useRef(false);
 
   // ── Auto-scroll ───────────────────────────────────────────────────────────
   useEffect(() => {
@@ -278,7 +254,7 @@ export default function ChatWidget() {
 
       setMessages((prev) => [...prev, assistantMsg]);
 
-      if (leadMatch) {
+      if (leadMatch && !leadSubmittedRef.current) {
         const pairs: Record<string, string> = {};
         leadMatch[1].split('|').forEach((pair) => {
           const idx = pair.indexOf('=');
@@ -298,6 +274,7 @@ export default function ChatWidget() {
             gdprConsent: true,
             conversationExcerpt: excerpt,
           });
+          leadSubmittedRef.current = true;
           if (result.whatsappLink) setWhatsappLink(result.whatsappLink);
         } catch {
           // silent — confirmation message already shown to user

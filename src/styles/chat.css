@@ -10,15 +10,14 @@
   --chat-accent:        #02defc;
   --chat-lime:          #7ffe00;
   --chat-width:         380px;
-  --chat-height:        540px;
+  --chat-height:        560px;
   --chat-radius:        20px;
-  --chat-toggle-size:   100px;
+  --chat-toggle-size:   64px;
 
-  /* Same gradient used by .neon-btn on the site */
   --neon-gradient: linear-gradient(135deg, #02defc, #7ffe00, #fdf301, #f47319, #fc0197);
 }
 
-/* ─── Shared gradient animation (mirrors btn-gradient in globals) */
+/* ─── Shared gradient animation ───────────────────────────────── */
 @keyframes chat-btn-gradient {
   0%, 100% { background-position: 0% 50%; }
   25%       { background-position: 100% 0%; }
@@ -29,7 +28,7 @@
 /* ─── Toggle Button ─────────────────────────────────────────── */
 .chat-toggle {
   position: fixed;
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
   right: 24px;
   width: var(--chat-toggle-size);
   height: var(--chat-toggle-size);
@@ -43,19 +42,20 @@
   justify-content: center;
   z-index: 9999;
   overflow: visible;
-  transition: filter 0.2s ease;
+  transition: filter 0.2s ease, opacity 0.25s ease, transform 0.25s ease;
 }
 
 .chat-toggle::before {
   display: none;
 }
 
-/* Floating animation — only when closed */
-.chat-toggle:not(.is-open) {
-  animation: icon-float 45s ease-in-out infinite;
+/* Floating animation — only when closed, only on desktop */
+@media (min-width: 769px) {
+  .chat-toggle:not(.is-open) {
+    animation: icon-float 45s ease-in-out infinite;
+  }
 }
 
-/* Pause on hover so user can click */
 .chat-toggle:not(.is-open):hover {
   animation-play-state: paused;
   filter: drop-shadow(0 0 14px rgba(2, 222, 252, 0.9));
@@ -65,7 +65,6 @@
   filter: drop-shadow(0 0 6px rgba(2, 222, 252, 0.5));
 }
 
-/* Open state — fixed at bottom-right, no float */
 .chat-toggle.is-open {
   background: transparent;
   animation: none;
@@ -86,31 +85,23 @@
   100% { transform: translate(0px,    0px);   }
 }
 
-/* Robot icon (closed) — sized and kept within button */
+/* Robot icon — sized within button */
 .chat-toggle-robot-icon {
-  width: 72px;
-  height: 72px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Close icon (open) */
-.chat-toggle-close-icon {
-  width: 20px;
-  height: 20px;
-  color: rgba(255, 255, 255, 0.7);
-}
-
 /* ─── Chat Panel ────────────────────────────────────────────── */
 .chat-panel {
   position: fixed;
-  bottom: calc(var(--chat-toggle-size) + 32px);
+  bottom: calc(var(--chat-toggle-size) + 20px + env(safe-area-inset-bottom));
   right: 24px;
   width: var(--chat-width);
   height: var(--chat-height);
 
-  /* Matches .neon-card */
   background: var(--chat-surface);
   border: 1px solid var(--chat-border);
   border-radius: var(--chat-radius);
@@ -156,7 +147,6 @@
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  /* Matches .glass */
   background: var(--chat-glass);
   border-bottom: 1px solid var(--chat-glass-border);
   flex-shrink: 0;
@@ -183,7 +173,6 @@
 .chat-header-name {
   font-weight: 700;
   font-size: 14px;
-  /* Gradient text — mirrors .gradient-text on the site */
   background: linear-gradient(135deg, #02defc 0%, #7ffe00 50%, #02defc 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -215,6 +204,7 @@
   border-radius: 50%;
   background: #4ade80;
   animation: online-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 @keyframes online-pulse {
@@ -223,8 +213,8 @@
 }
 
 .chat-close-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
   background: transparent;
   border: 1px solid var(--chat-border);
@@ -234,6 +224,10 @@
   color: var(--chat-text-muted);
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   flex-shrink: 0;
+  cursor: pointer;
+  /* Minimum touch target */
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .chat-close-btn:hover {
@@ -243,19 +237,21 @@
 }
 
 .chat-close-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 /* ─── Messages Area ─────────────────────────────────────────── */
 .chat-messages {
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   scroll-behavior: smooth;
+  overscroll-behavior: contain;
 }
 
 .chat-messages::-webkit-scrollbar       { width: 4px; }
@@ -284,11 +280,11 @@
   padding: 10px 14px;
   border-radius: 16px;
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.6;
   word-break: break-word;
 }
 
-/* User bubble — same animated gradient as .neon-btn */
+/* User bubble */
 .chat-message.user .chat-bubble {
   background: var(--neon-gradient);
   background-size: 400% 400%;
@@ -299,7 +295,7 @@
   box-shadow: 0 4px 16px -4px rgba(2, 222, 252, 0.3);
 }
 
-/* Assistant bubble — .glass style */
+/* Assistant bubble */
 .chat-message.assistant .chat-bubble {
   background: var(--chat-glass);
   border: 1px solid var(--chat-glass-border);
@@ -339,7 +335,7 @@
 
 /* ─── Error Banner ──────────────────────────────────────────── */
 .chat-error {
-  margin: 0 16px;
+  margin: 0 12px 4px;
   padding: 10px 14px;
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.25);
@@ -347,138 +343,7 @@
   font-size: 13px;
   color: #fca5a5;
   flex-shrink: 0;
-}
-
-/* ─── Lead Form ─────────────────────────────────────────────── */
-.chat-lead-form {
-  margin: 4px 0;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--chat-border);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.chat-lead-form h3 {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--chat-accent);
-  margin: 0;
-  letter-spacing: 0.01em;
-}
-
-.chat-lead-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.chat-lead-field label {
-  font-size: 11px;
-  color: var(--chat-text-muted);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.chat-lead-field input {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid var(--chat-border);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 13px;
-  color: var(--chat-text);
-  outline: none;
-  transition: border-color 0.2s;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.chat-lead-field input:focus {
-  border-color: rgba(2, 222, 252, 0.4);
-}
-
-.chat-lead-field input.error {
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-.chat-field-error {
-  font-size: 11px;
-  color: #fca5a5;
-}
-
-.chat-gdpr-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 11.5px;
-  color: var(--chat-text-muted);
   line-height: 1.5;
-}
-
-.chat-gdpr-row input[type='checkbox'] {
-  margin-top: 2px;
-  accent-color: var(--chat-accent);
-  flex-shrink: 0;
-}
-
-/* Submit button — .neon-btn style */
-.chat-lead-submit {
-  position: relative;
-  background: var(--neon-gradient);
-  background-size: 400% 400%;
-  animation: chat-btn-gradient 6s ease infinite;
-  color: #000;
-  font-weight: 700;
-  font-size: 13px;
-  border: none;
-  border-radius: 25px;
-  padding: 10px;
-  cursor: pointer;
-  overflow: visible;
-  transition: transform 0.2s ease;
-  letter-spacing: 0.02em;
-}
-
-.chat-lead-submit::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 26px;
-  background: inherit;
-  background-size: inherit;
-  animation: inherit;
-  filter: blur(12px);
-  opacity: 0.4;
-  z-index: -1;
-  transition: opacity 0.3s, filter 0.3s;
-}
-
-.chat-lead-submit:hover:not(:disabled) {
-  transform: translateY(-1px) scale(1.01);
-}
-
-.chat-lead-submit:hover:not(:disabled)::before {
-  opacity: 0.65;
-  filter: blur(18px);
-}
-
-.chat-lead-submit:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.chat-lead-submit:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  animation: none;
-  background: #252525;
-}
-
-.chat-lead-submit:disabled::before {
-  display: none;
 }
 
 /* ─── WhatsApp CTA ──────────────────────────────────────────── */
@@ -487,8 +352,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin: 4px 16px 8px;
-  padding: 10px;
+  margin: 4px 12px 8px;
+  padding: 11px;
   background: rgba(37, 211, 102, 0.06);
   border: 1px solid rgba(37, 211, 102, 0.2);
   border-radius: 8px;
@@ -512,7 +377,8 @@
 
 /* ─── Input Area ────────────────────────────────────────────── */
 .chat-input-area {
-  padding: 12px 14px;
+  padding: 10px 12px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--chat-border);
   display: flex;
   gap: 8px;
@@ -523,20 +389,22 @@
 
 .chat-input {
   flex: 1;
-  /* Matches .glass */
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--chat-border);
   border-radius: 12px;
   padding: 10px 14px;
-  font-size: 14px;
+  /* 16px prevents iOS auto-zoom on focus */
+  font-size: 16px;
   color: var(--chat-text);
   outline: none;
   resize: none;
-  min-height: 42px;
+  min-height: 44px;
   max-height: 120px;
   overflow-y: auto;
-  line-height: 1.5;
+  line-height: 1.45;
   transition: border-color 0.2s;
+  font-family: inherit;
+  -webkit-appearance: none;
 }
 
 .chat-input:focus {
@@ -547,11 +415,11 @@
   color: rgba(255, 255, 255, 0.2);
 }
 
-/* Send button — .neon-btn style */
+/* Send button */
 .chat-send-btn {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
   background: var(--neon-gradient);
   background-size: 400% 400%;
@@ -564,6 +432,9 @@
   flex-shrink: 0;
   overflow: visible;
   transition: transform 0.2s ease;
+  /* Minimum touch target */
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .chat-send-btn::before {
@@ -615,16 +486,37 @@
   text-align: center;
   font-size: 10px;
   color: rgba(255, 255, 255, 0.15);
-  padding: 5px 0 9px;
+  padding: 4px 0 8px;
   flex-shrink: 0;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-/* ─── AI Orb Icon — no extra CSS needed, animations are in SVG ── */
+/* ─── Tablet (481px – 768px) ────────────────────────────────── */
+@media (min-width: 481px) and (max-width: 768px) {
+  :root {
+    --chat-width:        340px;
+    --chat-height:       500px;
+    --chat-toggle-size:  60px;
+  }
 
-/* ─── Mobile ────────────────────────────────────────────────── */
+  .chat-toggle-robot-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .chat-bubble {
+    font-size: 14px;
+  }
+}
+
+/* ─── Mobile (≤480px) ───────────────────────────────────────── */
 @media (max-width: 480px) {
+  :root {
+    --chat-toggle-size: 56px;
+  }
+
+  /* Full-screen panel on mobile */
   .chat-panel {
     position: fixed;
     top: 0;
@@ -632,13 +524,110 @@
     left: 0;
     right: 0;
     width: 100%;
+    height: 100%;
     height: 100dvh;
+    border-radius: 0;
+    border: none;
+    /* Slide up from bottom on mobile */
+    transform: translateY(100%);
+  }
+
+  .chat-panel.is-open {
+    transform: translateY(0);
     border-radius: 0;
     border: none;
   }
 
+  /* Hide toggle when panel is open on mobile — close button in header handles it */
+  .chat-toggle.is-open {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+  }
+
   .chat-toggle {
-    bottom: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
     right: 16px;
+  }
+
+  .chat-toggle-robot-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  /* Larger header on mobile */
+  .chat-header {
+    padding: 14px 16px;
+    padding-top: calc(14px + env(safe-area-inset-top));
+  }
+
+  .chat-header-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .chat-header-name {
+    font-size: 15px;
+  }
+
+  .chat-header-status {
+    font-size: 12px;
+  }
+
+  /* Messages area */
+  .chat-messages {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+
+  .chat-message {
+    max-width: 88%;
+  }
+
+  .chat-bubble {
+    font-size: 15px;
+    padding: 11px 14px;
+    line-height: 1.55;
+  }
+
+  /* Input area — accounts for keyboard and home indicator */
+  .chat-input-area {
+    padding: 10px 12px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .chat-input {
+    font-size: 16px;
+    padding: 11px 14px;
+    min-height: 46px;
+    border-radius: 14px;
+  }
+
+  .chat-send-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    min-width: 46px;
+    min-height: 46px;
+  }
+
+  .chat-error {
+    margin: 0 12px 4px;
+    font-size: 14px;
+  }
+
+  .chat-powered-by {
+    padding-bottom: calc(6px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ─── Very small screens (≤360px) ──────────────────────────── */
+@media (max-width: 360px) {
+  .chat-bubble {
+    font-size: 14px;
+  }
+
+  .chat-message {
+    max-width: 92%;
   }
 }

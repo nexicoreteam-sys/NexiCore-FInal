@@ -76,8 +76,8 @@ export async function POST(request: NextRequest) {
 
   // Cap history and sanitize
   const history = (messages as Array<{ role: string; content: string }>)
-    .slice(-20)
-    .map((msg) => ({ role: msg.role as 'user' | 'assistant', content: stripHtml(msg.content).slice(0, 4000) }));
+    .slice(-10)
+    .map((msg) => ({ role: msg.role as 'user' | 'assistant', content: stripHtml(msg.content).slice(0, 2000) }));
 
   const sanitizedHistory: ChatCompletionMessageParam[] = history.filter((m) => m.content.trim().length > 0);
 
@@ -94,7 +94,11 @@ export async function POST(request: NextRequest) {
     const reply = response.choices[0]?.message?.content || '';
     return NextResponse.json({ reply });
   } catch (err) {
-    console.error('[chat] Groq error:', (err as Error)?.message || err);
-    return NextResponse.json({ error: 'AI service temporarily unavailable.' }, { status: 500 });
+    const msg = (err as Error)?.message || '';
+    console.error('[chat] Groq error:', msg);
+    if (msg.includes('429') || msg.includes('rate limit') || msg.toLowerCase().includes('rate limit')) {
+      return NextResponse.json({ error: 'Asistentul este momentan ocupat. Te rugăm să încerci din nou în câteva minute.' }, { status: 429 });
+    }
+    return NextResponse.json({ error: 'Serviciul AI este temporar indisponibil. Te rugăm să încerci din nou.' }, { status: 500 });
   }
 }

@@ -100,7 +100,7 @@ const NEXICORE_KB = {
 };
 
 function buildSystemPrompt(): string {
-  const kb = JSON.stringify(NEXICORE_KB, null, 2);
+  const kb = JSON.stringify(NEXICORE_KB);
 
   return `Ești un membru al echipei Nexicore — nu un robot, ci o persoană reală care cunoaște bine agenția și serviciile ei. Vorbești natural, ca un coleg de echipă care ajută un potențial client, nu ca un asistent AI generic.
 
