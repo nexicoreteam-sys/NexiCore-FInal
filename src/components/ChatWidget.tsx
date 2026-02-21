@@ -5,7 +5,7 @@ import { sendMessage, submitLead } from '../lib/chat';
 import '../styles/chat.css';
 
 const SESSION_KEY = 'nexicore_chat_v1';
-const LEAD_TOKEN = '[SHOW_LEAD_FORM]';
+const LEAD_DATA_RE = /\[LEAD_DATA:([^\]]+)\]/;
 
 const WELCOME_MESSAGE = {
   id: 'welcome',
@@ -13,44 +13,167 @@ const WELCOME_MESSAGE = {
   content: 'Salut! Sunt Nexi, din echipa Nexicore. Cu ce te pot ajuta?',
 };
 
-// ── Validation (mirrors server rules) ────────────────────────────────────────
-const NAME_RE = /^[a-zA-ZÀ-ž\s\-']+$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PHONE_RO_RE = /^(\+40|0)[0-9]{8,9}$/;
-const PHONE_INTL_RE = /^\+[1-9][0-9]{7,14}$/;
 
-function validateLead({ name, email, phone, gdprConsent }: {
-  name: string;
-  email: string;
-  phone: string;
-  gdprConsent: boolean;
-}) {
-  const errors: Record<string, string> = {};
-  const n = (name || '').trim();
-  const e = (email || '').trim();
-  const p = (phone || '').trim();
+// ── AI Orb Icon (toggle button) ───────────────────────────────────────────────
+function IconAIOrb() {
+  return (
+    <div style={{ position: 'relative', width: 58, height: 58, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <svg viewBox="0 0 58 58" fill="none" aria-hidden="true" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+        <defs>
+          <radialGradient id="orb-core" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#02defc" stopOpacity="1" />
+            <stop offset="55%"  stopColor="#02defc" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#02defc" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="orb-sphere" cx="38%" cy="32%" r="60%">
+            <stop offset="0%"   stopColor="rgba(2,222,252,0.18)" />
+            <stop offset="100%" stopColor="rgba(2,222,252,0.02)" />
+          </radialGradient>
+          <filter id="orb-glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <filter id="dot-glow" x="-150%" y="-150%" width="400%" height="400%">
+            <feGaussianBlur stdDeviation="1.5" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
 
-  if (n.length < 2 || n.length > 100 || !NAME_RE.test(n))
-    errors.name = 'Introduceți un nume valid (2–100 caractere).';
-  if (!EMAIL_RE.test(e) || e.length > 254)
-    errors.email = 'Introduceți o adresă de email validă.';
-  if (!PHONE_RO_RE.test(p) && !PHONE_INTL_RE.test(p))
-    errors.phone = 'Introduceți un număr de telefon valid.';
-  if (gdprConsent !== true)
-    errors.gdpr = 'Acordul GDPR este obligatoriu.';
+        {/* HUD corner brackets */}
+        <path d="M2 12 L2 2 L12 2"   stroke="rgba(2,222,252,0.8)" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M46 2 L56 2 L56 12" stroke="rgba(2,222,252,0.8)" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2 46 L2 56 L12 56" stroke="rgba(2,222,252,0.8)" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M46 56 L56 56 L56 46" stroke="rgba(2,222,252,0.8)" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
 
-  return errors;
+        {/* Outer dashed halo */}
+        <circle cx="29" cy="29" r="26" stroke="rgba(2,222,252,0.08)" strokeWidth="0.6" strokeDasharray="5 3" />
+
+        {/* Ring 1 — horizontal, clockwise, cyan */}
+        <g>
+          <ellipse cx="29" cy="29" rx="22" ry="6" stroke="rgba(2,222,252,0.5)" strokeWidth="1.1" strokeDasharray="3.5 2" fill="none" />
+          <circle cx="51" cy="29" r="2.5" fill="#02defc" filter="url(#dot-glow)" />
+          <animateTransform attributeName="transform" type="rotate" from="0 29 29" to="360 29 29" dur="5s" repeatCount="indefinite" />
+        </g>
+
+        {/* Ring 2 — tilted 62°, counter-clockwise, lime */}
+        <g transform="rotate(62 29 29)">
+          <g>
+            <ellipse cx="29" cy="29" rx="20" ry="5.5" stroke="rgba(127,254,0,0.45)" strokeWidth="0.9" strokeDasharray="2.5 3" fill="none" />
+            <circle cx="49" cy="29" r="2" fill="#7ffe00" filter="url(#dot-glow)" />
+            <animateTransform attributeName="transform" type="rotate" from="0 29 29" to="-360 29 29" dur="8s" repeatCount="indefinite" />
+          </g>
+        </g>
+
+        {/* Ring 3 — tilted -62°, clockwise, orange */}
+        <g transform="rotate(-62 29 29)">
+          <g>
+            <ellipse cx="29" cy="29" rx="17" ry="4.5" stroke="rgba(244,115,25,0.35)" strokeWidth="0.8" strokeDasharray="2 4" fill="none" />
+            <circle cx="46" cy="29" r="1.7" fill="#f47319" filter="url(#dot-glow)" />
+            <animateTransform attributeName="transform" type="rotate" from="0 29 29" to="360 29 29" dur="12s" repeatCount="indefinite" />
+          </g>
+        </g>
+
+        {/* Sphere shell */}
+        <circle cx="29" cy="29" r="11" fill="url(#orb-sphere)" stroke="rgba(2,222,252,0.55)" strokeWidth="1.1" filter="url(#orb-glow)" />
+
+        {/* Sphere crosshairs */}
+        <line x1="18" y1="29" x2="40" y2="29" stroke="rgba(2,222,252,0.22)" strokeWidth="0.6" />
+        <line x1="29" y1="18" x2="29" y2="40" stroke="rgba(2,222,252,0.22)" strokeWidth="0.6" />
+
+        {/* Pulsing inner glow */}
+        <circle cx="29" cy="29" r="7" fill="url(#orb-core)">
+          <animate attributeName="r"       values="5;9;5"     dur="2.4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2.4s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Core dot */}
+        <circle cx="29" cy="29" r="3.8" fill="#02defc" filter="url(#orb-glow)">
+          <animate attributeName="r"       values="3.2;4.6;3.2" dur="2.4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="1;0.6;1"      dur="2.4s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Scanning line */}
+        <line x1="18" y1="29" x2="40" y2="29" stroke="rgba(2,222,252,0.55)" strokeWidth="0.7">
+          <animateTransform attributeName="transform" type="rotate" from="0 29 29" to="360 29 29" dur="3s" repeatCount="indefinite" />
+        </line>
+      </svg>
+    </div>
+  );
 }
 
-// ── SVG Icons ─────────────────────────────────────────────────────────────────
-function IconChat() {
+// ── Robot Avatar Icon (chat header) ──────────────────────────────────────────
+function IconRobot({ uid = 'a' }: { uid?: string }) {
+  const gradId = `rb-grad-${uid}`;
+  const glowId = `rb-glow-${uid}`;
+  const clipId = `rb-clip-${uid}`;
+
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" style={{ width: '100%', height: '100%' }}>
+      <defs>
+        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#02defc" />
+          <stop offset="100%" stopColor="#7ffe00" />
+        </linearGradient>
+        <filter id={glowId} x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="0.7" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        <clipPath id={clipId}>
+          <rect x="5" y="9" width="22" height="17" rx="3" />
+        </clipPath>
+      </defs>
+      <rect x="15" y="5.5" width="2" height="3.5" rx="1" fill="#02defc" opacity="0.75" />
+      <circle cx="16" cy="4.5" r="2" fill="#02defc" filter={`url(#${glowId})`}>
+        <animate attributeName="r"       values="1.5;2.5;1.5" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="1;0.25;1"    dur="1.8s" repeatCount="indefinite" />
+      </circle>
+      <rect x="5" y="9" width="22" height="17" rx="3"
+        stroke={`url(#${gradId})`} strokeWidth="1.3"
+        fill="rgba(2,222,252,0.04)" filter={`url(#${glowId})`} />
+      <line x1="8" y1="12.5" x2="24" y2="12.5" stroke="#02defc" strokeWidth="0.5" opacity="0.22" />
+      <g clipPath={`url(#${clipId})`}>
+        <rect x="5" y="9" width="22" height="1.4" fill="#02defc" opacity="0.38">
+          <animateTransform attributeName="transform" type="translate"
+            values="0,0;0,16;0,0" dur="3s" calcMode="linear" repeatCount="indefinite" />
+        </rect>
+      </g>
+      <rect x="8" y="14" width="6" height="4" rx="1.2" fill="#02defc" filter={`url(#${glowId})`}>
+        <animate attributeName="opacity" values="0.95;0.95;0.08;0.95;0.95"
+          keyTimes="0;0.44;0.5;0.56;1" dur="5s" repeatCount="indefinite" />
+      </rect>
+      <rect x="8" y="14" width="2" height="4" rx="0.6" fill="rgba(255,255,255,0.22)" />
+      <rect x="18" y="14" width="6" height="4" rx="1.2" fill="#02defc" filter={`url(#${glowId})`}>
+        <animate attributeName="opacity" values="0.95;0.95;0.08;0.95;0.95"
+          keyTimes="0;0.44;0.5;0.56;1" dur="5s" begin="0.18s" repeatCount="indefinite" />
+      </rect>
+      <rect x="18" y="14" width="2" height="4" rx="0.6" fill="rgba(255,255,255,0.22)" />
+
+      {/* ── Mouth – segmented LED bars ── */}
+      <rect x="9"    y="21.5" width="4" height="1.8" rx="0.5" fill="#7ffe00" opacity="0.9" />
+      <rect x="14"   y="21.5" width="4" height="1.8" rx="0.5" fill="#7ffe00" opacity="0.65">
+        <animate attributeName="opacity" values="0.65;1;0.65" dur="0.95s" repeatCount="indefinite" />
+      </rect>
+      <rect x="19"   y="21.5" width="4" height="1.8" rx="0.5" fill="#7ffe00" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.85;0.35" dur="0.95s" begin="0.48s" repeatCount="indefinite" />
+      </rect>
+
+      {/* ── Left ear connector ── */}
+      <rect x="2" y="14" width="3" height="6" rx="1"
+        stroke="#02defc" strokeWidth="1" fill="rgba(2,222,252,0.04)" opacity="0.75" />
+      <circle cx="3.5" cy="17" r="0.8" fill="#02defc" opacity="0.55" />
+
+      {/* ── Right ear connector ── */}
+      <rect x="27" y="14" width="3" height="6" rx="1"
+        stroke="#02defc" strokeWidth="1" fill="rgba(2,222,252,0.04)" opacity="0.75" />
+      <circle cx="28.5" cy="17" r="0.8" fill="#02defc" opacity="0.55" />
     </svg>
   );
 }
 
+// ── Other Icons ───────────────────────────────────────────────────────────────
 function IconClose() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -77,61 +200,22 @@ function IconWhatsApp() {
   );
 }
 
-function IconNexicore() {
-  return (
-    <svg viewBox="0 0 44 44" fill="none" style={{ width: '100%', height: '100%' }}>
-      <defs>
-        <linearGradient id="nexi-lg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#02defc" />
-          <stop offset="100%" stopColor="#7ffe00" />
-        </linearGradient>
-        <filter id="nexi-glow">
-          <feGaussianBlur stdDeviation="1.5" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-      </defs>
-      <g style={{ transformOrigin: '22px 22px', animation: 'nexi-spin 30s linear infinite' }}>
-        <path d="M22 2 L42 22 L22 42 L2 22 Z" stroke="url(#nexi-lg)" strokeWidth="1.3" strokeLinejoin="miter" fill="none" opacity="0.8" />
-        <circle cx="22" cy="2"  r="1.2" fill="#02defc" opacity="0.6" />
-        <circle cx="42" cy="22" r="1.2" fill="#02defc" opacity="0.5" />
-        <circle cx="22" cy="42" r="1.2" fill="#7ffe00" opacity="0.6" />
-        <circle cx="2"  cy="22" r="1.2" fill="#7ffe00" opacity="0.5" />
-      </g>
-      <g style={{ transformOrigin: '22px 22px', animation: 'nexi-spin-reverse 24s linear infinite' }}>
-        <path d="M22 10 L34 22 L22 34 L10 22 Z" stroke="url(#nexi-lg)" strokeWidth="0.7" strokeLinejoin="miter" fill="url(#nexi-lg)" fillOpacity="0.06" />
-      </g>
-      <path d="M22 16 L28 22 L22 28 L16 22 Z" stroke="url(#nexi-lg)" strokeWidth="0.8" fill="url(#nexi-lg)" fillOpacity="0.12" filter="url(#nexi-glow)">
-        <animate attributeName="fill-opacity" values="0.08;0.18;0.08" dur="4s" repeatCount="indefinite" />
-      </path>
-      <circle cx="22" cy="22" r="1.8" fill="url(#nexi-lg)">
-        <animate attributeName="r" values="1.4;2.2;1.4" dur="4s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.6;1;0.6" dur="4s" repeatCount="indefinite" />
-      </circle>
-    </svg>
-  );
-}
-
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showLeadForm, setShowLeadForm] = useState(false);
-  const [leadData, setLeadData] = useState({ name: '', email: '', phone: '', gdprConsent: false });
-  const [leadErrors, setLeadErrors] = useState<Record<string, string>>({});
-  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
-  const [leadSubmitted, setLeadSubmitted] = useState(false);
   const [chatError, setChatError] = useState('');
   const [whatsappLink, setWhatsappLink] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // ── Restore from sessionStorage on mount ──────────────────────────────────
+  // ── Restore from localStorage on mount ──────────────────────────────────
   useEffect(() => {
     try {
-      const saved = sessionStorage.getItem(SESSION_KEY);
+      const saved = localStorage.getItem(SESSION_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -143,10 +227,10 @@ export default function ChatWidget() {
     }
   }, []);
 
-  // ── Persist messages to sessionStorage ───────────────────────────────────
+  // ── Persist messages to localStorage ───────────────────────────────────
   useEffect(() => {
     try {
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(messages));
+      localStorage.setItem(SESSION_KEY, JSON.stringify(messages));
     } catch {
       // storage might be full
     }
@@ -155,7 +239,7 @@ export default function ChatWidget() {
   // ── Auto-scroll ───────────────────────────────────────────────────────────
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading, showLeadForm]);
+  }, [messages, isLoading]);
 
   // ── Focus input after open animation ─────────────────────────────────────
   useEffect(() => {
@@ -177,16 +261,14 @@ export default function ChatWidget() {
     setIsLoading(true);
 
     try {
-      // Build history (exclude static welcome, send role/content only)
       const history = [...messages, userMsg]
         .filter((m) => m.id !== 'welcome')
         .map(({ role, content }) => ({ role, content }));
 
       const rawReply = await sendMessage(history);
 
-      // Detect lead form trigger
-      const hasToken = rawReply.includes(LEAD_TOKEN);
-      const cleanReply = rawReply.replace(LEAD_TOKEN, '').trim();
+      const leadMatch = rawReply.match(LEAD_DATA_RE);
+      const cleanReply = rawReply.replace(LEAD_DATA_RE, '').trim();
 
       const assistantMsg = {
         id: (Date.now() + 1).toString(),
@@ -195,7 +277,32 @@ export default function ChatWidget() {
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-      if (hasToken) setShowLeadForm(true);
+
+      if (leadMatch) {
+        const pairs: Record<string, string> = {};
+        leadMatch[1].split('|').forEach((pair) => {
+          const idx = pair.indexOf('=');
+          if (idx !== -1) {
+            pairs[pair.slice(0, idx).trim()] = pair.slice(idx + 1).trim();
+          }
+        });
+        try {
+          const excerpt = [...messages, userMsg, assistantMsg]
+            .slice(-8)
+            .map(({ role, content }) => ({ role, content }));
+          const result = await submitLead({
+            name: pairs.name || '',
+            company: pairs.company || '',
+            email: pairs.email || '',
+            phone: pairs.phone || '',
+            gdprConsent: true,
+            conversationExcerpt: excerpt,
+          });
+          if (result.whatsappLink) setWhatsappLink(result.whatsappLink);
+        } catch {
+          // silent — confirmation message already shown to user
+        }
+      }
     } catch (err) {
       setChatError((err as Error).message || 'A apărut o eroare. Vă rugăm încercați din nou.');
     } finally {
@@ -212,61 +319,6 @@ export default function ChatWidget() {
     }
   };
 
-  // ── Lead form field change ─────────────────────────────────────────────────
-  const handleLeadChange = (field: string, value: string | boolean) => {
-    setLeadData((prev) => ({ ...prev, [field]: value }));
-    if (leadErrors[field]) {
-      setLeadErrors((prev) => {
-        const next = { ...prev };
-        delete next[field];
-        return next;
-      });
-    }
-  };
-
-  // ── Lead form submit ───────────────────────────────────────────────────────
-  const handleLeadSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const errors = validateLead(leadData);
-    if (Object.keys(errors).length > 0) {
-      setLeadErrors(errors);
-      return;
-    }
-
-    setIsSubmittingLead(true);
-    setLeadErrors({});
-
-    try {
-      // Last 6 messages as conversation excerpt
-      const excerpt = messages.slice(-6).map(({ role, content }) => ({ role, content }));
-
-      const result = await submitLead({
-        name: leadData.name.trim(),
-        email: leadData.email.trim(),
-        phone: leadData.phone.trim(),
-        gdprConsent: true,
-        conversationExcerpt: excerpt,
-      });
-
-      setLeadSubmitted(true);
-      setShowLeadForm(false);
-
-      if (result.whatsappLink) setWhatsappLink(result.whatsappLink);
-
-      const confirmMsg = {
-        id: (Date.now() + 2).toString(),
-        role: 'assistant',
-        content:
-          '✅ Mulțumim! Datele dumneavoastră au fost primite. Cineva din echipa Nexicore vă va contacta în cel mai scurt timp.',
-      };
-      setMessages((prev) => [...prev, confirmMsg]);
-    } catch (err) {
-      setLeadErrors({ submit: (err as Error).message || 'Eroare la trimitere. Încercați din nou.' });
-    } finally {
-      setIsSubmittingLead(false);
-    }
-  };
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -278,7 +330,7 @@ export default function ChatWidget() {
         aria-label={isOpen ? 'Închide chat' : 'Deschide chat'}
         aria-expanded={isOpen}
       >
-        {isOpen ? <IconClose /> : <IconChat />}
+        <span className="chat-toggle-robot-icon"><IconRobot uid="toggle" /></span>
       </button>
 
       {/* Chat Panel */}
@@ -290,7 +342,9 @@ export default function ChatWidget() {
       >
         {/* Header */}
         <div className="chat-header">
-          <div className="chat-header-avatar" aria-hidden="true"><IconNexicore /></div>
+          <div className="chat-header-avatar" aria-hidden="true">
+            <IconRobot uid="header" />
+          </div>
           <div className="chat-header-info">
             <div className="chat-header-name">Nexi</div>
             <div className="chat-header-status">
@@ -315,75 +369,6 @@ export default function ChatWidget() {
             </div>
           ))}
 
-          {showLeadForm && !leadSubmitted && (
-            <form className="chat-lead-form" onSubmit={handleLeadSubmit} noValidate>
-              <h3>Lăsați datele de contact</h3>
-
-              <div className="chat-lead-field">
-                <label htmlFor="lead-name">Nume *</label>
-                <input
-                  id="lead-name"
-                  type="text"
-                  placeholder="Ex: Ion Popescu"
-                  value={leadData.name}
-                  onChange={(e) => handleLeadChange('name', e.target.value)}
-                  className={leadErrors.name ? 'error' : ''}
-                  autoComplete="name"
-                />
-                {leadErrors.name && <span className="chat-field-error">{leadErrors.name}</span>}
-              </div>
-
-              <div className="chat-lead-field">
-                <label htmlFor="lead-email">Email *</label>
-                <input
-                  id="lead-email"
-                  type="email"
-                  placeholder="Ex: ion@companie.ro"
-                  value={leadData.email}
-                  onChange={(e) => handleLeadChange('email', e.target.value)}
-                  className={leadErrors.email ? 'error' : ''}
-                  autoComplete="email"
-                />
-                {leadErrors.email && <span className="chat-field-error">{leadErrors.email}</span>}
-              </div>
-
-              <div className="chat-lead-field">
-                <label htmlFor="lead-phone">Telefon *</label>
-                <input
-                  id="lead-phone"
-                  type="tel"
-                  placeholder="Ex: 0740 123 456"
-                  value={leadData.phone}
-                  onChange={(e) => handleLeadChange('phone', e.target.value)}
-                  className={leadErrors.phone ? 'error' : ''}
-                  autoComplete="tel"
-                />
-                {leadErrors.phone && <span className="chat-field-error">{leadErrors.phone}</span>}
-              </div>
-
-              <div className="chat-gdpr-row">
-                <input
-                  id="lead-gdpr"
-                  type="checkbox"
-                  checked={leadData.gdprConsent}
-                  onChange={(e) => handleLeadChange('gdprConsent', e.target.checked)}
-                />
-                <label htmlFor="lead-gdpr">
-                  Sunt de acord cu prelucrarea datelor personale conform GDPR.
-                </label>
-              </div>
-              {leadErrors.gdpr && <span className="chat-field-error">{leadErrors.gdpr}</span>}
-              {leadErrors.submit && <span className="chat-field-error">{leadErrors.submit}</span>}
-
-              <button
-                type="submit"
-                className="chat-lead-submit"
-                disabled={isSubmittingLead}
-              >
-                {isSubmittingLead ? 'Se trimite...' : 'Trimite datele →'}
-              </button>
-            </form>
-          )}
 
           {isLoading && (
             <div className="chat-typing" aria-label="AI scrie...">

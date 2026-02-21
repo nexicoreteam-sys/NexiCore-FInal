@@ -42,11 +42,13 @@ function buildEmailHtml({
   name,
   email,
   phone,
+  company,
   conversationExcerpt,
 }: {
   name: string;
   email: string;
   phone: string;
+  company: string;
   conversationExcerpt: Array<{ role: string; content: string }>;
 }): string {
   const safeConversation = Array.isArray(conversationExcerpt)
@@ -88,6 +90,10 @@ function buildEmailHtml({
                 <td style="padding:10px 16px;color:#888;width:100px;">Name</td>
                 <td style="padding:10px 16px;color:#fff;font-weight:600;">${stripHtml(name)}</td>
               </tr>
+              ${company ? `<tr>
+                <td style="padding:10px 16px;color:#888;">Company</td>
+                <td style="padding:10px 16px;color:#fff;font-weight:600;">${stripHtml(company)}</td>
+              </tr>` : ''}
               <tr>
                 <td style="padding:10px 16px;color:#888;">Email</td>
                 <td style="padding:10px 16px;"><a href="mailto:${stripHtml(email)}" style="color:#9b7bff;text-decoration:none;">${stripHtml(email)}</a></td>
@@ -145,10 +151,11 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => ({}));
-  const { name, email, phone, gdprConsent, conversationExcerpt } = body as {
+  const { name, email, phone, company, gdprConsent, conversationExcerpt } = body as {
     name?: unknown;
     email?: unknown;
     phone?: unknown;
+    company?: unknown;
     gdprConsent?: unknown;
     conversationExcerpt?: unknown;
   };
@@ -171,6 +178,7 @@ export async function POST(request: NextRequest) {
   const trimmedName = (name as string).trim();
   const trimmedEmail = (email as string).trim();
   const trimmedPhone = (phone as string).trim();
+  const trimmedCompany = typeof company === 'string' ? company.trim() : '';
 
   // Build WhatsApp deep link
   const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '40745292353';
@@ -189,6 +197,7 @@ export async function POST(request: NextRequest) {
         name: trimmedName,
         email: trimmedEmail,
         phone: trimmedPhone,
+        company: trimmedCompany,
         conversationExcerpt: Array.isArray(conversationExcerpt)
           ? (conversationExcerpt as Array<{ role: string; content: string }>)
           : [],
