@@ -27,6 +27,7 @@ export async function sendMessage(messages: Array<{ role: string; content: strin
  */
 export async function submitLead(leadData: {
   name: string;
+  company?: string;
   email: string;
   phone: string;
   gdprConsent: boolean;
